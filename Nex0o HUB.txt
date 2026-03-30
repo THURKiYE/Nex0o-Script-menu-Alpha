@@ -1,328 +1,497 @@
-# Nex0o Hub - Advanced Xeno Executor GUI
 
-Hier ist ein vollständiges, modernes Dark-Mode GUI mit grünem Akzent-Design für deinen Xeno Executor:
+-- Nex0o Hub - Universal Roblox Exploit GUI
+-- Made for Xeno Executor
+-- Dark Modern Design with Green Theme
 
-```lua
--- Nex0o Hub v1.0 - Advanced Executor GUI
--- Dark Theme mit grünem Accent Design
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+local Lighting = game:GetService("Lighting")
 
-local NexoHub = {}
-NexoHub.Version = "1.0"
-NexoHub.Config = {
-    PrimaryColor = Color3.fromRGB(34, 177, 76),      -- Grün
-    SecondaryColor = Color3.fromRGB(20, 20, 20),     -- Dunkel
-    AccentColor = Color3.fromRGB(15, 15, 15),        -- Noch dunkler
-    TextColor = Color3.fromRGB(255, 255, 255),       -- Weiß
-    HoverColor = Color3.fromRGB(45, 200, 90)         -- Heller Grün
-}
-
--- Hauptfenster erstellen
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "NexoHubGui"
-ScreenGui.ResetOnSpawn = false
-ScreenGui.ZIndex = 999
-ScreenGui.Parent = game:GetService("CoreGui")
-
--- Cursorlight Effekt
-local UserInputService = game:GetService("UserInputService")
-local CursorLight = Instance.new("Part")
-CursorLight.Shape = Enum.PartType.Ball
-CursorLight.Size = Vector3.new(0.5, 0.5, 0.5)
-CursorLight.CanCollide = false
-CursorLight.CFrame = CFrame.new(0, 0, 0)
-CursorLight.TopSurface = Enum.SurfaceType.Smooth
-CursorLight.BottomSurface = Enum.SurfaceType.Smooth
-CursorLight.Material = Enum.Material.Neon
-CursorLight.Color = NexoHub.Config.PrimaryColor
-CursorLight.CanQuery = false
-CursorLight.CanTouch = false
-
-local CursorPointLight = Instance.new("PointLight")
-CursorPointLight.Color = NexoHub.Config.PrimaryColor
-CursorPointLight.Range = 15
-CursorPointLight.Brightness = 2
-CursorPointLight.Parent = CursorLight
-
-CursorLight.Parent = workspace
-
--- Haupttitel Bar
-local TitleBar = Instance.new("Frame")
-TitleBar.Name = "TitleBar"
-TitleBar.Size = UDim2.new(0, 600, 0, 50)
-TitleBar.BackgroundColor3 = NexoHub.Config.SecondaryColor
-TitleBar.BorderSizePixel = 0
-TitleBar.Position = UDim2.new(0.5, -300, 0.1, 0)
-TitleBar.Parent = ScreenGui
-
--- Titel
-local TitleLabel = Instance.new("TextLabel")
-TitleLabel.Name = "Title"
-TitleLabel.Size = UDim2.new(0.7, 0, 1, 0)
-TitleLabel.BackgroundTransparency = 1
-TitleLabel.Text = "NEX0O HUB"
-TitleLabel.TextColor3 = NexoHub.Config.PrimaryColor
-TitleLabel.TextSize = 28
-TitleLabel.Font = Enum.Font.GothamBold
-TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-TitleLabel.Parent = TitleBar
-
-local VersionLabel = Instance.new("TextLabel")
-VersionLabel.Name = "Version"
-VersionLabel.Size = UDim2.new(0.3, 0, 1, 0)
-VersionLabel.Position = UDim2.new(0.7, 0, 0, 0)
-VersionLabel.BackgroundTransparency = 1
-VersionLabel.Text = "v" .. NexoHub.Version
-VersionLabel.TextColor3 = NexoHub.Config.PrimaryColor
-VersionLabel.TextSize = 12
-VersionLabel.Font = Enum.Font.Gotham
-VersionLabel.TextXAlignment = Enum.TextXAlignment.Right
-VersionLabel.Parent = TitleBar
-
--- Hauptcontainer
-local MainContainer = Instance.new("Frame")
-MainContainer.Name = "MainContainer"
-MainContainer.Size = UDim2.new(0, 600, 0, 500)
-MainContainer.Position = UDim2.new(0.5, -300, 0.1, 50)
-MainContainer.BackgroundColor3 = NexoHub.Config.AccentColor
-MainContainer.BorderSizePixel = 2
-MainContainer.BorderColor3 = NexoHub.Config.PrimaryColor
-MainContainer.Parent = ScreenGui
-
--- UICorner für abgerundete Ecken
-local function CreateCorner(Parent, Radius)
-    local Corner = Instance.new("UICorner")
-    Corner.CornerRadius = UDim.new(0, Radius)
-    Corner.Parent = Parent
-    return Corner
+-- Anti-VC Bypass
+if game:GetService("VoiceChatService") then
+    game:GetService("VoiceChatService"):SetVoiceEnabled(false)
 end
 
-CreateCorner(TitleBar, 12)
-CreateCorner(MainContainer, 12)
+-- GUI Erstellen
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "Nex0oHub"
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Parent = CoreGui
 
--- TabContainer
-local TabContainer = Instance.new("Frame")
-TabContainer.Name = "TabContainer"
-TabContainer.Size = UDim2.new(0, 150, 1, 0)
-TabContainer.BackgroundColor3 = NexoHub.Config.SecondaryColor
-TabContainer.BorderSizePixel = 1
-TabContainer.BorderColor3 = NexoHub.Config.PrimaryColor
-TabContainer.Parent = MainContainer
+-- Main Frame
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 400, 0, 500)
+MainFrame.Position = UDim2.new(0.5, -200, 0.5, -250)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
 
--- ScrollFrame für Tabs
-local TabScroll = Instance.new("ScrollingFrame")
-TabScroll.Name = "TabScroll"
-TabScroll.Size = UDim2.new(1, 0, 1, 0)
-TabScroll.BackgroundTransparency = 1
-TabScroll.BorderSizePixel = 0
-TabScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-TabScroll.ScrollBarThickness = 4
-TabScroll.Parent = TabContainer
+-- Glow-Effekt um Mauszeiger
+local MouseGlow = Instance.new("Frame")
+MouseGlow.Name = "MouseGlow"
+MouseGlow.Size = UDim2.new(0, 50, 0, 50)
+MouseGlow.BackgroundTransparency = 1
+MouseGlow.Parent = ScreenGui
 
--- Content Container
-local ContentContainer = Instance.new("Frame")
-ContentContainer.Name = "ContentContainer"
-ContentContainer.Size = UDim2.new(1, -150, 1, 0)
-ContentContainer.Position = UDim2.new(0, 150, 0, 0)
-ContentContainer.BackgroundColor3 = NexoHub.Config.AccentColor
-ContentContainer.BorderSizePixel = 0
-ContentContainer.Parent = MainContainer
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(1, 0)
+UICorner.Parent = MouseGlow
 
--- Content Scroll
-local ContentScroll = Instance.new("ScrollingFrame")
-ContentScroll.Name = "ContentScroll"
-ContentScroll.Size = UDim2.new(1, -10, 1, -10)
-ContentScroll.Position = UDim2.new(0, 5, 0, 5)
-ContentScroll.BackgroundTransparency = 1
-ContentScroll.BorderSizePixel = 0
-ContentScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-ContentScroll.ScrollBarThickness = 4
-ContentScroll.ScrollBarImageColor3 = NexoHub.Config.PrimaryColor
-ContentScroll.Parent = ContentContainer
+local UIGradient = Instance.new("UIGradient")
+UIGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 0)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 200, 0))
+}
+UIGradient.Rotation = 45
+UIGradient.Parent = MouseGlow
 
--- Fenster verschieben
-local UserInputService = game:GetService("UserInputService")
-local dragging = false
-local dragStart = nil
-local windowStart = nil
+-- Header
+local Header = Instance.new("Frame")
+Header.Name = "Header"
+Header.Size = UDim2.new(1, 0, 0, 40)
+Header.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+Header.BorderSizePixel = 0
+Header.Parent = MainFrame
 
-TitleBar.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        windowStart = TitleBar.Parent.Position
-    end
+local Title = Instance.new("TextLabel")
+Title.Name = "Title"
+Title.Size = UDim2.new(0, 200, 1, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "Nex0o Hub"
+Title.TextColor3 = Color3.fromRGB(0, 255, 0)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 18
+Title.Parent = Header
+
+-- Color Picker Button
+local ColorPicker = Instance.new("TextButton")
+ColorPicker.Name = "ColorPicker"
+ColorPicker.Size = UDim2.new(0, 80, 0, 25)
+ColorPicker.Position = UDim2.new(1, -90, 0.5, -12.5)
+ColorPicker.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+ColorPicker.Text = "Farbe ändern"
+ColorPicker.TextColor3 = Color3.fromRGB(0, 255, 0)
+ColorPicker.Font = Enum.Font.Gotham
+ColorPicker.TextSize = 12
+ColorPicker.Parent = Header
+
+local ColorPickerCorner = Instance.new("UICorner")
+ColorPickerCorner.CornerRadius = UDim.new(0, 4)
+ColorPickerCorner.Parent = ColorPicker
+
+local ColorPickerStroke = Instance.new("UIStroke")
+ColorPickerStroke.Color = Color3.fromRGB(0, 255, 0)
+ColorPickerStroke.Thickness = 1
+ColorPickerStroke.Parent = ColorPicker
+
+-- Content Frame
+local ContentFrame = Instance.new("ScrollingFrame")
+ContentFrame.Name = "ContentFrame"
+ContentFrame.Size = UDim2.new(1, -20, 1, -60)
+ContentFrame.Position = UDim2.new(0, 10, 0, 50)
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.BorderSizePixel = 0
+ContentFrame.ScrollBarThickness = 5
+ContentFrame.ScrollBarImageColor3 = Color3.fromRGB(0, 255, 0)
+ContentFrame.Parent = MainFrame
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Padding = UDim.new(0, 10)
+UIListLayout.Parent = ContentFrame
+
+-- Funktionen
+local currentColor = Color3.fromRGB(0, 255, 0)
+
+local function createToggle(name, defaultState, callback)
+    local ToggleFrame = Instance.new("Frame")
+    ToggleFrame.Name = name .. "Toggle"
+    ToggleFrame.Size = UDim2.new(1, 0, 0, 40)
+    ToggleFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+    ToggleFrame.BorderSizePixel = 0
+    ToggleFrame.Parent = ContentFrame
+    
+    local ToggleCorner = Instance.new("UICorner")
+    ToggleCorner.CornerRadius = UDim.new(0, 6)
+    ToggleCorner.Parent = ToggleFrame
+    
+    local ToggleStroke = Instance.new("UIStroke")
+    ToggleStroke.Color = currentColor
+    ToggleStroke.Thickness = 1
+    ToggleStroke.Parent = ToggleFrame
+    
+    local ToggleLabel = Instance.new("TextLabel")
+    ToggleLabel.Name = "Label"
+    ToggleLabel.Size = UDim2.new(0.7, 0, 1, 0)
+    ToggleLabel.BackgroundTransparency = 1
+    ToggleLabel.Text = name
+    ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ToggleLabel.Font = Enum.Font.Gotham
+    ToggleLabel.TextSize = 14
+    ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    ToggleLabel.Parent = ToggleFrame
+    
+    local ToggleButton = Instance.new("TextButton")
+    ToggleButton.Name = "ToggleButton"
+    ToggleButton.Size = UDim2.new(0, 50, 0, 25)
+    ToggleButton.Position = UDim2.new(1, -60, 0.5, -12.5)
+    ToggleButton.BackgroundColor3 = defaultState and currentColor or Color3.fromRGB(40, 40, 45)
+    ToggleButton.Text = ""
+    ToggleButton.Parent = ToggleFrame
+    
+    local ToggleButtonCorner = Instance.new("UICorner")
+    ToggleButtonCorner.CornerRadius = UDim.new(0, 12)
+    ToggleButtonCorner.Parent = ToggleButton
+    
+    local ToggleCircle = Instance.new("Frame")
+    ToggleCircle.Name = "ToggleCircle"
+    ToggleCircle.Size = UDim2.new(0, 21, 0, 21)
+    ToggleCircle.Position = defaultState and UDim2.new(1, -23, 0.5, -10.5) or UDim2.new(0, 2, 0.5, -10.5)
+    ToggleCircle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    ToggleCircle.Parent = ToggleButton
+    
+    local CircleCorner = Instance.new("UICorner")
+    CircleCorner.CornerRadius = UDim.new(1, 0)
+    CircleCorner.Parent = ToggleCircle
+    
+    local state = defaultState
+    
+    ToggleButton.MouseButton1Click:Connect(function()
+        state = not state
+        if state then
+            ToggleButton.BackgroundColor3 = currentColor
+            ToggleCircle:TweenPosition(UDim2.new(1, -23, 0.5, -10.5), "Out", "Quad", 0.2)
+        else
+            ToggleButton.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
+            ToggleCircle:TweenPosition(UDim2.new(0, 2, 0.5, -10.5), "Out", "Quad", 0.2)
+        end
+        callback(state)
+    end)
+    
+    return ToggleFrame
+end
+
+-- Maus Glow Update
+RunService.RenderStepped:Connect(function()
+    MouseGlow.Position = UDim2.new(0, Mouse.X - 25, 0, Mouse.Y - 25)
 end)
 
-TitleBar.InputEnded:Connect(function(input, gameProcessed)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = false
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input, gameProcessed)
-    if dragging and input.UserInputType == Enum.UserInputType.Mouse then
-        local delta = input.Position - dragStart
-        TitleBar.Parent.Position = windowStart + UDim2.new(0, delta.X, 0, delta.Y)
-    end
-end)
-
--- Cursor Light folgen
-UserInputService.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Mouse then
-        local camera = workspace.CurrentCamera
-        local unitRay = camera:ScreenPointToRay(input.Position.X, input.Position.Y)
-        local distance = 50
-        CursorLight.Position = unitRay.Origin + unitRay.Direction * distance
-    end
-end)
-
--- Tab-System
-local Tabs = {}
-
-function NexoHub:CreateTab(TabName, Icon)
-    local Tab = {}
-    Tab.Name = TabName
-    Tab.Icon = Icon or "📦"
-    Tab.Elements = {}
+-- Funktion zum Ändern der Design-Farbe
+local function updateColor(newColor)
+    currentColor = newColor
     
-    -- Tab Button
-    local TabButton = Instance.new("TextButton")
-    TabButton.Name = TabName
-    TabButton.Size = UDim2.new(1, 0, 0, 45)
-    TabButton.BackgroundColor3 = NexoHub.Config.SecondaryColor
-    TabButton.BorderSizePixel = 1
-    TabButton.BorderColor3 = NexoHub.Config.PrimaryColor
-    TabButton.TextColor3 = NexoHub.Config.TextColor
-    TabButton.Font = Enum.Font.GothamBold
-    TabButton.TextSize = 12
-    TabButton.Text = Tab.Icon .. " " .. TabName
-    TabButton.Parent = TabScroll
-    
-    CreateCorner(TabButton, 8)
-    
-    -- Content Frame
-    local ContentFrame = Instance.new("Frame")
-    ContentFrame.Name = TabName .. "Content"
-    ContentFrame.Size = UDim2.new(1, 0, 1, 0)
-    ContentFrame.BackgroundTransparency = 1
-    ContentFrame.Visible = false
-    ContentFrame.Parent = ContentScroll
-    
-    local UIListLayout = Instance.new("UIListLayout")
-    UIListLayout.Padding = UDim.new(0, 10)
-    UIListLayout.FillDirection = Enum.FillDirection.Vertical
-    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    UIListLayout.Parent = ContentFrame
-    
-    local UIPadding = Instance.new("UIPadding")
-    UIPadding.PaddingLeft = UDim.new(0, 10)
-    UIPadding.PaddingRight = UDim.new(0, 10)
-    UIPadding.PaddingTop = UDim.new(0, 10)
-    UIPadding.PaddingBottom = UDim.new(0, 10)
-    UIPadding.Parent = ContentFrame
-    
-    -- Tab Klick
-    TabButton.MouseButton1Click:Connect(function()
-        for _, frame in pairs(ContentScroll:GetChildren()) do
-            if frame:IsA("Frame") then
-                frame.Visible = false
+    -- Update all UI elements with new color
+    for _, element in pairs(ScreenGui:GetDescendants()) do
+        if element:IsA("UIStroke") then
+            element.Color = newColor
+        elseif element.Name == "ToggleButton" and element:IsA("TextButton") then
+            local circle = element:FindFirstChild("ToggleCircle")
+            if circle then
+                local circlePos = circle.Position
+                if circlePos == UDim2.new(1, -23, 0.5, -10.5) then
+                    element.BackgroundColor3 = newColor
+                end
             end
         end
-        ContentFrame.Visible = true
+    end
+    
+    -- Update Mouse Glow
+    MouseGlow.UIGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, newColor),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(newColor.R * 200/255, newColor.G * 200/255, newColor.B * 200/255))
+    }
+    
+    Title.TextColor3 = newColor
+    ColorPicker.TextColor3 = newColor
+    ContentFrame.ScrollBarImageColor3 = newColor
+end
+
+-- Color Picker Funktion
+ColorPicker.MouseButton1Click:Connect(function()
+    local colorPickerGui = Instance.new("ScreenGui", CoreGui)
+    local colorFrame = Instance.new("Frame", colorPickerGui)
+    colorFrame.Size = UDim2.new(0, 200, 0, 150)
+    colorFrame.Position = UDim2.new(0.5, -100, 0.5, -75)
+    colorFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+    
+    local colors = {
+        Color3.fromRGB(0, 255, 0),    -- Grün (Default)
+        Color3.fromRGB(0, 150, 255),  -- Blau
+        Color3.fromRGB(255, 50, 50),  -- Rot
+        Color3.fromRGB(255, 255, 0),  -- Gelb
+        Color3.fromRGB(255, 0, 255)   -- Pink
+    }
+    
+    for i, color in ipairs(colors) do
+        local colorButton = Instance.new("TextButton", colorFrame)
+        colorButton.Size = UDim2.new(0.8, 0, 0, 30)
+        colorButton.Position = UDim2.new(0.1, 0, (i-1)*0.2 + 0.1, 0)
+        colorButton.BackgroundColor3 = color
+        colorButton.Text = ""
+        colorButton.MouseButton1Click:Connect(function()
+            updateColor(color)
+            colorPickerGui:Destroy()
+        end)
+    end
+end)
+
+-- Exploit Funktionen
+local FlyEnabled = false
+local GodModeEnabled = false
+local InvisibleEnabled = false
+local ESPEnabled = false
+
+-- Alle Emotes Funktion
+local function AllEmotes()
+    local emotes = {
+        "wave", "point", "cheer", "laugh", "dance", "dance2", "dance3",
+        "floss", "kill", "angry", "sit", "lay", "jump", "clap"
+    }
+    
+    for _, emote in pairs(emotes) do
+        game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest"):FireServer("/e " .. emote, "All")
+    end
+end
+
+-- Jerk Emote
+local function JerkEmote()
+    game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest"):FireServer("/e jerk", "All")
+end
+
+-- Bang Emote
+local function BangEmote()
+    game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest"):FireServer("/e bang", "All")
+end
+
+-- Fliegen wie HD Admin
+local function Fly()
+    FlyEnabled = not FlyEnabled
+    
+    if FlyEnabled then
+        local BodyGyro = Instance.new("BodyGyro")
+        BodyGyro.P = 9e4
+        BodyGyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+        BodyGyro.cframe = LocalPlayer.Character.HumanoidRootPart.CFrame
+        BodyGyro.Parent = LocalPlayer.Character.HumanoidRootPart
         
-        -- Button Highlight
-        for _, button in pairs(TabScroll:GetChildren()) do
-            if button:IsA("TextButton") then
-                button.BackgroundColor3 = NexoHub.Config.SecondaryColor
-                button.TextColor3 = NexoHub.Config.TextColor
+        local BodyVelocity = Instance.new("BodyVelocity")
+        BodyVelocity.velocity = Vector3.new(0, 0, 0)
+        BodyVelocity.maxForce = Vector3.new(9e9, 9e9, 9e9)
+        BodyVelocity.Parent = LocalPlayer.Character.HumanoidRootPart
+        
+        local flying = true
+        
+        LocalPlayer.Character.Humanoid.PlatformStand = true
+        
+        spawn(function()
+            repeat wait()
+                if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    BodyGyro.cframe = workspace.CurrentCamera.CoordinateFrame
+                    BodyVelocity.velocity = Vector3.new(0, 0, 0)
+                    
+                    if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W) then
+                        BodyVelocity.velocity = (workspace.CurrentCamera.CoordinateFrame.lookVector * 50) + BodyVelocity.velocity
+                    end
+                    if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.S) then
+                        BodyVelocity.velocity = (workspace.CurrentCamera.CoordinateFrame.lookVector * -50) + BodyVelocity.velocity
+                    end
+                    if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.A) then
+                        BodyVelocity.velocity = (workspace.CurrentCamera.CoordinateFrame.rightVector * -50) + BodyVelocity.velocity
+                    end
+                    if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D) then
+                        BodyVelocity.velocity = (workspace.CurrentCamera.CoordinateFrame.rightVector * 50) + BodyVelocity.velocity
+                    end
+                end
+            until not flying
+        end)
+        
+        LocalPlayer.CharacterAdded:Connect(function()
+            flying = false
+            FlyEnabled = false
+        end)
+    else
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            LocalPlayer.Character.Humanoid.PlatformStand = false
+            for _, v in pairs(LocalPlayer.Character.HumanoidRootPart:GetChildren()) do
+                if v:IsA("BodyGyro") or v:IsA("BodyVelocity") then
+                    v:Destroy()
+                end
             end
         end
-        TabButton.BackgroundColor3 = NexoHub.Config.PrimaryColor
-        TabButton.TextColor3 = NexoHub.Config.SecondaryColor
-    end)
-    
-    -- Hover Effekt
-    TabButton.MouseEnter:Connect(function()
-        if TabButton.BackgroundColor3 ~= NexoHub.Config.PrimaryColor then
-            TabButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        end
-    end)
-    
-    TabButton.MouseLeave:Connect(function()
-        if TabButton.BackgroundColor3 ~= NexoHub.Config.PrimaryColor then
-            TabButton.BackgroundColor3 = NexoHub.Config.SecondaryColor
-        end
-    end)
-    
-    Tab.ContentFrame = ContentFrame
-    Tab.TabButton = TabButton
-    
-    -- Funktion zum Erstellen von Elementen
-    function Tab:AddLabel(Text)
-        local Label = Instance.new("TextLabel")
-        Label.Size = UDim2.new(1, 0, 0, 30)
-        Label.BackgroundTransparency = 1
-        Label.Text = Text
-        Label.TextColor3 = NexoHub.Config.PrimaryColor
-        Label.Font = Enum.Font.GothamBold
-        Label.TextSize = 14
-        Label.TextXAlignment = Enum.TextXAlignment.Left
-        Label.Parent = self.ContentFrame
-        return Label
     end
-    
-    function Tab:AddButton(Text, Callback)
-        local Button = Instance.new("TextButton")
-        Button.Size = UDim2.new(1, 0, 0, 40)
-        Button.BackgroundColor3 = NexoHub.Config.SecondaryColor
-        Button.BorderColor3 = NexoHub.Config.PrimaryColor
-        Button.BorderSizePixel = 2
-        Button.TextColor3 = NexoHub.Config.PrimaryColor
-        Button.Font = Enum.Font.GothamBold
-        Button.TextSize = 13
-        Button.Text = Text
-        Button.Parent = self.ContentFrame
-        
-        CreateCorner(Button, 8)
-        
-        Button.MouseButton1Click:Connect(Callback)
-        
-        Button.MouseEnter:Connect(function()
-            Button.BackgroundColor3 = NexoHub.Config.PrimaryColor
-            Button.TextColor3 = NexoHub.Config.SecondaryColor
-        end)
-        
-        Button.MouseLeave:Connect(function()
-            Button.BackgroundColor3 = NexoHub.Config.SecondaryColor
-            Button.TextColor3 = NexoHub.Config.PrimaryColor
-        end)
-        
-        return Button
+end
+
+-- Godmode (Health Lock)
+local function GodMode(state)
+    GodModeEnabled = state
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+        if state then
+            LocalPlayer.Character.Humanoid.MaxHealth = math.huge
+            LocalPlayer.Character.Humanoid.Health = math.huge
+        else
+            LocalPlayer.Character.Humanoid.MaxHealth = 100
+            LocalPlayer.Character.Humanoid.Health = 100
+        end
     end
+end
+
+-- Unsichtbar machen
+local function Invisible(state)
+    InvisibleEnabled = state
+    if LocalPlayer.Character then
+        for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
+            if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                part.Transparency = state and 1 or 0
+            end
+        end
+    end
+end
+
+-- ESP Funktion
+local function ESP(state)
+    ESPEnabled = state
     
-    function Tab:AddToggle(Text, DefaultValue, Callback)
-        local Container = Instance.new("Frame")
-        Container.Size = UDim2.new(1, 0, 0, 40)
-        Container.BackgroundColor3 = NexoHub.Config.SecondaryColor
-        Container.BorderColor3 = NexoHub.Config.PrimaryColor
-        Container.BorderSizePixel = 2
-        Container.Parent = self.ContentFrame
+    if state then
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Character then
+                local highlight = Instance.new("Highlight")
+                highlight.Name = player.Name .. "_ESP"
+                highlight.FillColor = Color3.fromRGB(255, 0, 0)
+                highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+                highlight.FillTransparency = 0.5
+                highlight.OutlineTransparency = 0
+                highlight.Parent = player.Character
+            end
+        end
         
-        CreateCorner(Container, 8)
-        
-        local Label = Instance.new("TextLabel")
-        Label.Size = UDim2.new(0.7, 0, 1, 0)
-        Label.BackgroundTransparency = 1
-        Label.Text = Text
-        Label.TextColor3 = NexoHub.Config.TextColor
-        Label.Font = Enum.Font.GothamBold
-        Label.TextSize = 13
-        Label.TextXAlignment = Enum.TextXAlignment.Left
-        Label.Parent = Container
-        
-        local ToggleButton = Instance.new("TextButton")
-        ToggleButton.Size = UDim2.new(0.25, 0, 0.7, 0)
-        ToggleButton.Position = UDim2.new(0.75, -5, 0.15, 0)
-        ToggleButton.BackgroundColor3 = DefaultValue and NexoHub.Config.PrimaryColor or Color3.fromRGB(60, 60, 60)
-        Toggle
+        Players.PlayerAdded:Connect(function(player)
+            player.CharacterAdded:Connect(function(char)
+                if ESPEnabled then
+                    wait(1)
+                    local highlight = Instance.new("Highlight")
+                    highlight.Name = player.Name .. "_ESP"
+                    highlight.FillColor = Color3.fromRGB(255, 0, 0)
+                    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+                    highlight.FillTransparency = 0.5
+                    highlight.OutlineTransparency = 0
+                    highlight.Parent = char
+                end
+            end)
+        end)
+    else
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Character then
+                local esp = player.Character:FindFirstChild(player.Name .. "_ESP")
+                if esp then
+                    esp:Destroy()
+                end
+            end
+        end
+    end
+end
+
+-- Toggles erstellen
+createToggle("Alle Emotes", false, function(state)
+    if state then AllEmotes() end
+end)
+
+createToggle("Fliegen", false, function(state)
+    Fly()
+end)
+
+createToggle("Godmode", false, function(state)
+    GodMode(state)
+end)
+
+createToggle("Unsichtbar", false, function(state)
+    Invisible(state)
+end)
+
+createToggle("Player ESP", false, function(state)
+    ESP(state)
+end)
+
+-- Emote Buttons erstellen (separate Buttons für Jerk und Bang)
+local function createEmoteButton(name, callback)
+    local ButtonFrame = Instance.new("Frame")
+    ButtonFrame.Name = name .. "Button"
+    ButtonFrame.Size = UDim2.new(1, 0, 0, 35)
+    ButtonFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+    ButtonFrame.BorderSizePixel = 0
+    ButtonFrame.Parent = ContentFrame
+    
+    local ButtonCorner = Instance.new("UICorner")
+    ButtonCorner.CornerRadius = UDim.new(0, 6)
+    ButtonCorner.Parent = ButtonFrame
+    
+    local ButtonStroke = Instance.new("UIStroke")
+    ButtonStroke.Color = currentColor
+    ButtonStroke.Thickness = 1
+    ButtonStroke.Parent = ButtonFrame
+    
+    local ButtonLabel = Instance.new("TextButton")
+    ButtonLabel.Name = "Button"
+    ButtonLabel.Size = UDim2.new(1, -20, 1, -10)
+    ButtonLabel.Position = UDim2.new(0, 10, 0, 5)
+    ButtonLabel.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
+    ButtonLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ButtonLabel.Text = name .. " Emote"
+    ButtonLabel.Font = Enum.Font.GothamBold
+    ButtonLabel.TextSize = 14
+    ButtonLabel.Parent = ButtonFrame
+    
+    local LabelCorner = Instance.new("UICorner")
+    LabelCorner.CornerRadius = UDim.new(0, 4)
+    LabelCorner.Parent = ButtonLabel
+    
+    ButtonLabel.MouseButton1Click:Connect(callback)
+    
+    return ButtonFrame
+end
+
+-- Emote Buttons hinzufügen
+createEmoteButton("Jerk", JerkEmote)
+createEmoteButton("Bang", BangEmote)
+
+-- Hotkey für alle Emotes (. Taste)
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.Period then
+        AllEmotes()
+    end
+end)
+
+-- Character Added Events für persistente Features
+LocalPlayer.CharacterAdded:Connect(function()
+    if GodModeEnabled then
+        wait(1)
+        GodMode(true)
+    end
+    if InvisibleEnabled then
+        wait(1)
+        Invisible(true)
+    end
+end)
+
+-- Initialisiere Features wenn schon ein Character existiert
+if LocalPlayer.Character then
+    spawn(function()
+        wait(2)
+        if GodModeEnabled then GodMode(true) end
+        if InvisibleEnabled then Invisible(true) end
+    end)
+end
+
+-- GUI schließen mit Rechtsklick
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        MainFrame.Visible = not MainFrame.Visible
+        MouseGlow.Visible = MainFrame.Visible
+    end
+end)
+
+print("Nex0o Hub erfolgreich geladen! Rechtsklick zum Verstecken/Anzeigen.")
