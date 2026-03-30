@@ -1,377 +1,328 @@
-# Nex0o Hub - Xeno Executor GUI
+# Nex0o Hub - Advanced Xeno Executor GUI
 
-Ich werde dir einen modernen, dunklen Xeno-Executor mit grünem Design erstellen. Hier ist der komplette Code:
+Hier ist ein vollständiges, modernes Dark-Mode GUI mit grünem Akzent-Design für deinen Xeno Executor:
 
 ```lua
--- Nex0o Hub - Modern Xeno Executor GUI
--- Features: Emotes, Flight, Godmode, Invisibility, ESP, AntiVC Bypass
+-- Nex0o Hub v1.0 - Advanced Executor GUI
+-- Dark Theme mit grünem Accent Design
 
-local Players = game:GetService("Players")
+local NexoHub = {}
+NexoHub.Version = "1.0"
+NexoHub.Config = {
+    PrimaryColor = Color3.fromRGB(34, 177, 76),      -- Grün
+    SecondaryColor = Color3.fromRGB(20, 20, 20),     -- Dunkel
+    AccentColor = Color3.fromRGB(15, 15, 15),        -- Noch dunkler
+    TextColor = Color3.fromRGB(255, 255, 255),       -- Weiß
+    HoverColor = Color3.fromRGB(45, 200, 90)         -- Heller Grün
+}
+
+-- Hauptfenster erstellen
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "NexoHubGui"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndex = 999
+ScreenGui.Parent = game:GetService("CoreGui")
+
+-- Cursorlight Effekt
 local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
+local CursorLight = Instance.new("Part")
+CursorLight.Shape = Enum.PartType.Ball
+CursorLight.Size = Vector3.new(0.5, 0.5, 0.5)
+CursorLight.CanCollide = false
+CursorLight.CFrame = CFrame.new(0, 0, 0)
+CursorLight.TopSurface = Enum.SurfaceType.Smooth
+CursorLight.BottomSurface = Enum.SurfaceType.Smooth
+CursorLight.Material = Enum.Material.Neon
+CursorLight.Color = NexoHub.Config.PrimaryColor
+CursorLight.CanQuery = false
+CursorLight.CanTouch = false
 
-local player = Players.LocalPlayer
-local mouse = player:GetMouse()
-local character = player.Character or player.CharacterAdded:Wait()
+local CursorPointLight = Instance.new("PointLight")
+CursorPointLight.Color = NexoHub.Config.PrimaryColor
+CursorPointLight.Range = 15
+CursorPointLight.Brightness = 2
+CursorPointLight.Parent = CursorLight
 
--- ============ CONFIGURATION ============
-local config = {
-    primaryColor = Color3.fromRGB(0, 255, 100), -- Neon Green
-    secondaryColor = Color3.fromRGB(20, 20, 20), -- Dark Background
-    accentColor = Color3.fromRGB(30, 30, 30), -- Slightly lighter dark
-    textColor = Color3.fromRGB(255, 255, 255), -- White text
-    borderWidth = 2,
-}
+CursorLight.Parent = workspace
 
--- ============ FEATURES STATE ============
-local features = {
-    flight = false,
-    godmode = false,
-    invisibility = false,
-    esp = false,
-    antiVC = true,
-}
+-- Haupttitel Bar
+local TitleBar = Instance.new("Frame")
+TitleBar.Name = "TitleBar"
+TitleBar.Size = UDim2.new(0, 600, 0, 50)
+TitleBar.BackgroundColor3 = NexoHub.Config.SecondaryColor
+TitleBar.BorderSizePixel = 0
+TitleBar.Position = UDim2.new(0.5, -300, 0.1, 0)
+TitleBar.Parent = ScreenGui
 
-local flightSpeed = 50
-local flightDirection = Vector3.new(0, 0, 0)
+-- Titel
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Name = "Title"
+TitleLabel.Size = UDim2.new(0.7, 0, 1, 0)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Text = "NEX0O HUB"
+TitleLabel.TextColor3 = NexoHub.Config.PrimaryColor
+TitleLabel.TextSize = 28
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+TitleLabel.Parent = TitleBar
 
--- ============ UTILITY FUNCTIONS ============
-local function createButton(parent, text, position, size, callback)
-    local button = Instance.new("TextButton")
-    button.Name = text
-    button.Size = size
-    button.Position = position
-    button.BackgroundColor3 = config.secondaryColor
-    button.BorderColor3 = config.primaryColor
-    button.BorderSizePixel = config.borderWidth
-    button.TextColor3 = config.textColor
-    button.TextSize = 14
-    button.Font = Enum.Font.GothamBold
-    button.Text = text
-    button.Parent = parent
-    
-    local function onMouseEnter()
-        button.BackgroundColor3 = config.accentColor
-    end
-    
-    local function onMouseLeave()
-        button.BackgroundColor3 = config.secondaryColor
-    end
-    
-    button.MouseEnter:Connect(onMouseEnter)
-    button.MouseLeave:Connect(onMouseLeave)
-    button.MouseButton1Click:Connect(callback)
-    
-    return button
+local VersionLabel = Instance.new("TextLabel")
+VersionLabel.Name = "Version"
+VersionLabel.Size = UDim2.new(0.3, 0, 1, 0)
+VersionLabel.Position = UDim2.new(0.7, 0, 0, 0)
+VersionLabel.BackgroundTransparency = 1
+VersionLabel.Text = "v" .. NexoHub.Version
+VersionLabel.TextColor3 = NexoHub.Config.PrimaryColor
+VersionLabel.TextSize = 12
+VersionLabel.Font = Enum.Font.Gotham
+VersionLabel.TextXAlignment = Enum.TextXAlignment.Right
+VersionLabel.Parent = TitleBar
+
+-- Hauptcontainer
+local MainContainer = Instance.new("Frame")
+MainContainer.Name = "MainContainer"
+MainContainer.Size = UDim2.new(0, 600, 0, 500)
+MainContainer.Position = UDim2.new(0.5, -300, 0.1, 50)
+MainContainer.BackgroundColor3 = NexoHub.Config.AccentColor
+MainContainer.BorderSizePixel = 2
+MainContainer.BorderColor3 = NexoHub.Config.PrimaryColor
+MainContainer.Parent = ScreenGui
+
+-- UICorner für abgerundete Ecken
+local function CreateCorner(Parent, Radius)
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, Radius)
+    Corner.Parent = Parent
+    return Corner
 end
 
-local function createToggleSwitch(parent, text, position, size, callback)
-    local switchContainer = Instance.new("Frame")
-    switchContainer.Name = text .. "Toggle"
-    switchContainer.Size = size
-    switchContainer.Position = position
-    switchContainer.BackgroundColor3 = config.accentColor
-    switchContainer.BorderColor3 = config.primaryColor
-    switchContainer.BorderSizePixel = config.borderWidth
-    switchContainer.Parent = parent
-    
-    local label = Instance.new("TextLabel")
-    label.Name = "Label"
-    label.Size = UDim2.new(0.7, 0, 1, 0)
-    label.Position = UDim2.new(0, 10, 0, 0)
-    label.BackgroundTransparency = 1
-    label.TextColor3 = config.textColor
-    label.TextSize = 13
-    label.Font = Enum.Font.Gotham
-    label.Text = text
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.Parent = switchContainer
-    
-    local toggle = Instance.new("TextButton")
-    toggle.Name = "SwitchButton"
-    toggle.Size = UDim2.new(0.25, 0, 0.8, 0)
-    toggle.Position = UDim2.new(0.72, 0, 0.1, 0)
-    toggle.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    toggle.BorderColor3 = config.primaryColor
-    toggle.BorderSizePixel = 1
-    toggle.TextColor3 = config.textColor
-    toggle.TextSize = 12
-    toggle.Font = Enum.Font.GothamBold
-    toggle.Text = "OFF"
-    toggle.Parent = switchContainer
-    
-    local isEnabled = false
-    
-    toggle.MouseButton1Click:Connect(function()
-        isEnabled = not isEnabled
-        toggle.Text = isEnabled and "ON" or "OFF"
-        toggle.BackgroundColor3 = isEnabled and config.primaryColor or Color3.fromRGB(100, 100, 100)
-        toggle.TextColor3 = isEnabled and config.secondaryColor or config.textColor
-        callback(isEnabled)
-    end)
-    
-    return switchContainer, toggle
-end
+CreateCorner(TitleBar, 12)
+CreateCorner(MainContainer, 12)
 
-local function addMouseGlow()
-    local oldMouse = mouse
-    RunService.RenderStepped:Connect(function()
-        local mousePos = oldMouse.Hit.Position
-    end)
-end
+-- TabContainer
+local TabContainer = Instance.new("Frame")
+TabContainer.Name = "TabContainer"
+TabContainer.Size = UDim2.new(0, 150, 1, 0)
+TabContainer.BackgroundColor3 = NexoHub.Config.SecondaryColor
+TabContainer.BorderSizePixel = 1
+TabContainer.BorderColor3 = NexoHub.Config.PrimaryColor
+TabContainer.Parent = MainContainer
 
--- ============ MAIN GUI ============
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "Nex0oHub"
-screenGui.ResetOnSpawn = false
-screenGui.Parent = player:WaitForChild("PlayerGui")
+-- ScrollFrame für Tabs
+local TabScroll = Instance.new("ScrollingFrame")
+TabScroll.Name = "TabScroll"
+TabScroll.Size = UDim2.new(1, 0, 1, 0)
+TabScroll.BackgroundTransparency = 1
+TabScroll.BorderSizePixel = 0
+TabScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+TabScroll.ScrollBarThickness = 4
+TabScroll.Parent = TabContainer
 
--- Main Container
-local mainFrame = Instance.new("Frame")
-mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 450, 0, 600)
-mainFrame.Position = UDim2.new(0.5, -225, 0.5, -300)
-mainFrame.BackgroundColor3 = config.secondaryColor
-mainFrame.BorderColor3 = config.primaryColor
-mainFrame.BorderSizePixel = config.borderWidth
-mainFrame.Parent = screenGui
+-- Content Container
+local ContentContainer = Instance.new("Frame")
+ContentContainer.Name = "ContentContainer"
+ContentContainer.Size = UDim2.new(1, -150, 1, 0)
+ContentContainer.Position = UDim2.new(0, 150, 0, 0)
+ContentContainer.BackgroundColor3 = NexoHub.Config.AccentColor
+ContentContainer.BorderSizePixel = 0
+ContentContainer.Parent = MainContainer
 
--- Top Bar
-local topBar = Instance.new("Frame")
-topBar.Name = "TopBar"
-topBar.Size = UDim2.new(1, 0, 0, 40)
-topBar.BackgroundColor3 = config.accentColor
-topBar.BorderColor3 = config.primaryColor
-topBar.BorderSizePixel = config.borderWidth
-topBar.Parent = mainFrame
+-- Content Scroll
+local ContentScroll = Instance.new("ScrollingFrame")
+ContentScroll.Name = "ContentScroll"
+ContentScroll.Size = UDim2.new(1, -10, 1, -10)
+ContentScroll.Position = UDim2.new(0, 5, 0, 5)
+ContentScroll.BackgroundTransparency = 1
+ContentScroll.BorderSizePixel = 0
+ContentScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+ContentScroll.ScrollBarThickness = 4
+ContentScroll.ScrollBarImageColor3 = NexoHub.Config.PrimaryColor
+ContentScroll.Parent = ContentContainer
 
-local titleLabel = Instance.new("TextLabel")
-titleLabel.Name = "Title"
-titleLabel.Size = UDim2.new(0.7, 0, 1, 0)
-titleLabel.Position = UDim2.new(0.05, 0, 0, 0)
-titleLabel.BackgroundTransparency = 1
-titleLabel.TextColor3 = config.primaryColor
-titleLabel.TextSize = 20
-titleLabel.Font = Enum.Font.GothamBold
-titleLabel.Text = "⚡ Nex0o Hub"
-titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-titleLabel.Parent = topBar
-
--- Close Button
-local closeButton = Instance.new("TextButton")
-closeButton.Name = "CloseButton"
-closeButton.Size = UDim2.new(0, 30, 0, 30)
-closeButton.Position = UDim2.new(1, -35, 0.5, -15)
-closeButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-closeButton.BorderColor3 = Color3.fromRGB(200, 0, 0)
-closeButton.BorderSizePixel = 2
-closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeButton.TextSize = 18
-closeButton.Font = Enum.Font.GothamBold
-closeButton.Text = "✕"
-closeButton.Parent = topBar
-
-closeButton.MouseButton1Click:Connect(function()
-    mainFrame:TweenSize(UDim2.new(0, 450, 0, 0), Enum.EasingDirection.InOut, Enum.EasingStyle.Quad, 0.3, true, function()
-        screenGui:Destroy()
-    end)
-end)
-
--- Draggable functionality
+-- Fenster verschieben
+local UserInputService = game:GetService("UserInputService")
 local dragging = false
 local dragStart = nil
-local frameStart = nil
+local windowStart = nil
 
-topBar.InputBegan:Connect(function(input, gameProcessed)
+TitleBar.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         dragging = true
-        dragStart = mouse.Position
-        frameStart = mainFrame.Position
+        dragStart = input.Position
+        windowStart = TitleBar.Parent.Position
     end
 end)
 
-topBar.InputEnded:Connect(function(input, gameProcessed)
+TitleBar.InputEnded:Connect(function(input, gameProcessed)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         dragging = false
     end
 end)
 
 UserInputService.InputChanged:Connect(function(input, gameProcessed)
-    if dragging and dragStart then
-        local delta = mouse.Position - dragStart
-        mainFrame.Position = frameStart + UDim2.new(0, delta.X, 0, delta.Y)
+    if dragging and input.UserInputType == Enum.UserInputType.Mouse then
+        local delta = input.Position - dragStart
+        TitleBar.Parent.Position = windowStart + UDim2.new(0, delta.X, 0, delta.Y)
     end
 end)
 
--- Scroll Frame
-local scrollFrame = Instance.new("ScrollingFrame")
-scrollFrame.Name = "ContentScroll"
-scrollFrame.Size = UDim2.new(1, -10, 1, -50)
-scrollFrame.Position = UDim2.new(0, 5, 0, 45)
-scrollFrame.BackgroundTransparency = 1
-scrollFrame.ScrollBarThickness = 8
-scrollFrame.ScrollBarImageColor3 = config.primaryColor
-scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 1200)
-scrollFrame.Parent = mainFrame
+-- Cursor Light folgen
+UserInputService.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Mouse then
+        local camera = workspace.CurrentCamera
+        local unitRay = camera:ScreenPointToRay(input.Position.X, input.Position.Y)
+        local distance = 50
+        CursorLight.Position = unitRay.Origin + unitRay.Direction * distance
+    end
+end)
 
--- ============ TABS SYSTEM ============
-local tabButtons = Instance.new("Frame")
-tabButtons.Name = "TabButtons"
-tabButtons.Size = UDim2.new(1, 0, 0, 35)
-tabButtons.Position = UDim2.new(0, 0, 0, 0)
-tabButtons.BackgroundColor3 = config.accentColor
-tabButtons.BorderColor3 = config.primaryColor
-tabButtons.BorderSizePixel = 1
-tabButtons.Parent = scrollFrame
+-- Tab-System
+local Tabs = {}
 
-local tabs = {}
-local tabContents = {}
-
-local function createTab(name, position)
-    local tabButton = Instance.new("TextButton")
-    tabButton.Name = name .. "Tab"
-    tabButton.Size = UDim2.new(0, 100, 1, 0)
-    tabButton.Position = position
-    tabButton.BackgroundColor3 = config.secondaryColor
-    tabButton.BorderColor3 = config.primaryColor
-    tabButton.BorderSizePixel = 1
-    tabButton.TextColor3 = config.textColor
-    tabButton.TextSize = 12
-    tabButton.Font = Enum.Font.GothamBold
-    tabButton.Text = name
-    tabButton.Parent = tabButtons
+function NexoHub:CreateTab(TabName, Icon)
+    local Tab = {}
+    Tab.Name = TabName
+    Tab.Icon = Icon or "📦"
+    Tab.Elements = {}
     
-    local content = Instance.new("Frame")
-    content.Name = name .. "Content"
-    content.Size = UDim2.new(1, 0, 1, -35)
-    content.Position = UDim2.new(0, 0, 0, 35)
-    content.BackgroundTransparency = 1
-    content.Visible = (name == "Features")
-    content.Parent = scrollFrame
+    -- Tab Button
+    local TabButton = Instance.new("TextButton")
+    TabButton.Name = TabName
+    TabButton.Size = UDim2.new(1, 0, 0, 45)
+    TabButton.BackgroundColor3 = NexoHub.Config.SecondaryColor
+    TabButton.BorderSizePixel = 1
+    TabButton.BorderColor3 = NexoHub.Config.PrimaryColor
+    TabButton.TextColor3 = NexoHub.Config.TextColor
+    TabButton.Font = Enum.Font.GothamBold
+    TabButton.TextSize = 12
+    TabButton.Text = Tab.Icon .. " " .. TabName
+    TabButton.Parent = TabScroll
     
-    tabButton.MouseButton1Click:Connect(function()
-        for _, tab in pairs(tabContents) do
-            tab.Visible = false
+    CreateCorner(TabButton, 8)
+    
+    -- Content Frame
+    local ContentFrame = Instance.new("Frame")
+    ContentFrame.Name = TabName .. "Content"
+    ContentFrame.Size = UDim2.new(1, 0, 1, 0)
+    ContentFrame.BackgroundTransparency = 1
+    ContentFrame.Visible = false
+    ContentFrame.Parent = ContentScroll
+    
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.Padding = UDim.new(0, 10)
+    UIListLayout.FillDirection = Enum.FillDirection.Vertical
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout.Parent = ContentFrame
+    
+    local UIPadding = Instance.new("UIPadding")
+    UIPadding.PaddingLeft = UDim.new(0, 10)
+    UIPadding.PaddingRight = UDim.new(0, 10)
+    UIPadding.PaddingTop = UDim.new(0, 10)
+    UIPadding.PaddingBottom = UDim.new(0, 10)
+    UIPadding.Parent = ContentFrame
+    
+    -- Tab Klick
+    TabButton.MouseButton1Click:Connect(function()
+        for _, frame in pairs(ContentScroll:GetChildren()) do
+            if frame:IsA("Frame") then
+                frame.Visible = false
+            end
         end
-        content.Visible = true
+        ContentFrame.Visible = true
+        
+        -- Button Highlight
+        for _, button in pairs(TabScroll:GetChildren()) do
+            if button:IsA("TextButton") then
+                button.BackgroundColor3 = NexoHub.Config.SecondaryColor
+                button.TextColor3 = NexoHub.Config.TextColor
+            end
+        end
+        TabButton.BackgroundColor3 = NexoHub.Config.PrimaryColor
+        TabButton.TextColor3 = NexoHub.Config.SecondaryColor
     end)
     
-    table.insert(tabContents, content)
-    return tabButton, content
-end
-
-local _, featuresTab = createTab("Features", UDim2.new(0, 0, 0, 0))
-local _, emotesTab = createTab("Emotes", UDim2.new(0, 100, 0, 0))
-local _, settingsTab = createTab("Settings", UDim2.new(0, 200, 0, 0))
-
--- ============ FEATURES TAB ============
-local yOffset = 10
-
--- Flight Toggle
-createToggleSwitch(
-    featuresTab,
-    "✈️ Flight",
-    UDim2.new(0, 10, 0, yOffset),
-    UDim2.new(1, -20, 0, 40),
-    function(enabled)
-        features.flight = enabled
-    end
-)
-yOffset = yOffset + 50
-
--- Godmode Toggle
-createToggleSwitch(
-    featuresTab,
-    "❤️ Godmode",
-    UDim2.new(0, 10, 0, yOffset),
-    UDim2.new(1, -20, 0, 40),
-    function(enabled)
-        features.godmode = enabled
-    end
-)
-yOffset = yOffset + 50
-
--- Invisibility Toggle
-createToggleSwitch(
-    featuresTab,
-    "👻 Invisibility",
-    UDim2.new(0, 10, 0, yOffset),
-    UDim2.new(1, -20, 0, 40),
-    function(enabled)
-        features.invisibility = enabled
-    end
-)
-yOffset = yOffset + 50
-
--- ESP Toggle
-createToggleSwitch(
-    featuresTab,
-    "👁️ Player ESP",
-    UDim2.new(0, 10, 0, yOffset),
-    UDim2.new(1, -20, 0, 40),
-    function(enabled)
-        features.esp = enabled
-    end
-)
-yOffset = yOffset + 50
-
--- AntiVC Toggle
-createToggleSwitch(
-    featuresTab,
-    "🔐 AntiVC Bypass",
-    UDim2.new(0, 10, 0, yOffset),
-    UDim2.new(1, -20, 0, 40),
-    function(enabled)
-        features.antiVC = enabled
-    end
-)
-
--- ============ EMOTES TAB ============
-local emoteYOffset = 10
-
-local emotes = {
-    "jerk",
-    "bang",
-    "wave",
-    "dance",
-    "laugh",
-    "point",
-}
-
-for _, emoteName in pairs(emotes) do
-    createButton(
-        emotesTab,
-        "Use: " .. emoteName:upper(),
-        UDim2.new(0, 10, 0, emoteYOffset),
-        UDim2.new(0.45, -10, 0, 35),
-        function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/Dawid-Maclowskj/RobloxScripts/main/Animations.lua"))()
-            -- Emote execution
+    -- Hover Effekt
+    TabButton.MouseEnter:Connect(function()
+        if TabButton.BackgroundColor3 ~= NexoHub.Config.PrimaryColor then
+            TabButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
         end
-    )
+    end)
     
-    if emoteYOffset % 100 == 10 then
-        emoteYOffset = emoteYOffset + 45
-    else
-        emoteYOffset = emoteYOffset - 35
+    TabButton.MouseLeave:Connect(function()
+        if TabButton.BackgroundColor3 ~= NexoHub.Config.PrimaryColor then
+            TabButton.BackgroundColor3 = NexoHub.Config.SecondaryColor
+        end
+    end)
+    
+    Tab.ContentFrame = ContentFrame
+    Tab.TabButton = TabButton
+    
+    -- Funktion zum Erstellen von Elementen
+    function Tab:AddLabel(Text)
+        local Label = Instance.new("TextLabel")
+        Label.Size = UDim2.new(1, 0, 0, 30)
+        Label.BackgroundTransparency = 1
+        Label.Text = Text
+        Label.TextColor3 = NexoHub.Config.PrimaryColor
+        Label.Font = Enum.Font.GothamBold
+        Label.TextSize = 14
+        Label.TextXAlignment = Enum.TextXAlignment.Left
+        Label.Parent = self.ContentFrame
+        return Label
     end
-end
-
--- ============ SETTINGS TAB ============
-local colorLabel = Instance.new("TextLabel")
-colorLabel.Name = "ColorLabel"
-colorLabel.Size = UDim2.new(1, -20, 0, 20)
-colorLabel.Position = UDim2.new(0, 10, 0, 10)
-colorLabel.BackgroundTransparency = 1
-colorLabel.TextColor3 = config.primaryColor
-colorLabel.TextSize = 14
-colorLabel.Font = Enum.Font.GothamBold
-colorLabel.Text = "Primary Color"
-colorLabel.TextXAlignment = Enum.TextXAlignment.Left
-colorLabel.Parent = settingsTab
-
-local colorOptions = {
-    {name = "🟢 Neon Green", color = Color3.fromRGB(0, 255, 100)},
-    {name = "🔵 Neon Blue", color = Color3.fromRGB(0, 100, 255)},
-    {name = "🔴 Neon Red", color = Color3.fromRGB(255, 50, 50)},
-    {name = "💜 Neon Purple", color = Color3.fromRGB(200, 0, 
+    
+    function Tab:AddButton(Text, Callback)
+        local Button = Instance.new("TextButton")
+        Button.Size = UDim2.new(1, 0, 0, 40)
+        Button.BackgroundColor3 = NexoHub.Config.SecondaryColor
+        Button.BorderColor3 = NexoHub.Config.PrimaryColor
+        Button.BorderSizePixel = 2
+        Button.TextColor3 = NexoHub.Config.PrimaryColor
+        Button.Font = Enum.Font.GothamBold
+        Button.TextSize = 13
+        Button.Text = Text
+        Button.Parent = self.ContentFrame
+        
+        CreateCorner(Button, 8)
+        
+        Button.MouseButton1Click:Connect(Callback)
+        
+        Button.MouseEnter:Connect(function()
+            Button.BackgroundColor3 = NexoHub.Config.PrimaryColor
+            Button.TextColor3 = NexoHub.Config.SecondaryColor
+        end)
+        
+        Button.MouseLeave:Connect(function()
+            Button.BackgroundColor3 = NexoHub.Config.SecondaryColor
+            Button.TextColor3 = NexoHub.Config.PrimaryColor
+        end)
+        
+        return Button
+    end
+    
+    function Tab:AddToggle(Text, DefaultValue, Callback)
+        local Container = Instance.new("Frame")
+        Container.Size = UDim2.new(1, 0, 0, 40)
+        Container.BackgroundColor3 = NexoHub.Config.SecondaryColor
+        Container.BorderColor3 = NexoHub.Config.PrimaryColor
+        Container.BorderSizePixel = 2
+        Container.Parent = self.ContentFrame
+        
+        CreateCorner(Container, 8)
+        
+        local Label = Instance.new("TextLabel")
+        Label.Size = UDim2.new(0.7, 0, 1, 0)
+        Label.BackgroundTransparency = 1
+        Label.Text = Text
+        Label.TextColor3 = NexoHub.Config.TextColor
+        Label.Font = Enum.Font.GothamBold
+        Label.TextSize = 13
+        Label.TextXAlignment = Enum.TextXAlignment.Left
+        Label.Parent = Container
+        
+        local ToggleButton = Instance.new("TextButton")
+        ToggleButton.Size = UDim2.new(0.25, 0, 0.7, 0)
+        ToggleButton.Position = UDim2.new(0.75, -5, 0.15, 0)
+        ToggleButton.BackgroundColor3 = DefaultValue and NexoHub.Config.PrimaryColor or Color3.fromRGB(60, 60, 60)
+        Toggle
